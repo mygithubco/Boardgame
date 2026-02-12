@@ -69,7 +69,7 @@ pipeline {
         stage('Build & Tag Docker Image') {
             steps {
                script {
-                   withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
+                   withDockerRegistry(credentialsId: 'docker-cred', url: '') {
                             sh "docker build -t venkatesh994/boardshack:latest ."
                     }
                }
@@ -78,15 +78,15 @@ pipeline {
         
         stage('Docker Image Scan') {
             steps {
-                sh "trivy image --format table -o trivy-image-report.html ganeshperumal007/boardshack:latest "
+                sh "trivy image --format table -o trivy-image-report.html venkatesh994/boardshack:latest "
             }
         }
         
         stage('Push Docker Image') {
             steps {
                script {
-                   withDockerRegistry(credentialsId: 'docker-cred', toolName: 'docker') {
-                            sh "docker push ganeshperumal007/boardshack:latest"
+                   withDockerRegistry(credentialsId: 'docker-cred', url: '') {
+                            sh "docker push venkatesh994/boardshack:latest"
                     }
                }
             }
