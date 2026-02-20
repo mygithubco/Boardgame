@@ -85,7 +85,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                script {
-                   withDockerRegistry(credentialsId: 'docker-cred', toolname:'docker') {
+                   withDockerRegistry(credentialsId: 'docker-cred', url: '') {
                             sh "docker push venkatesh994/boardshack:latest"
                     }
                }
