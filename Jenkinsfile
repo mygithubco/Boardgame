@@ -92,23 +92,23 @@ pipeline {
             }
         }
         stage('Deploy To Kubernetes') {
-            steps {
-               withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'k8-cred', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://172.31.21.79:6443') {
-                        sh "kubectl apply -f deployment-service.yaml"
-                }
-            }
+           steps {
+               sh '''
+               export KUBECONFIG=/var/lib/jenkins/.kube/config
+               kubectl create namespace webapps || true
+               kubectl apply -f deployment-service.yaml -n webapps
+               '''
+           }
+      }
+      stage('Verify the Deployment') {
+        steps {
+          sh '''
+            export KUBECONFIG=/var/lib/jenkins/.kube/config
+            kubectl get pods -n webapps
+            kubectl get svc -n webapps
+            '''
         }
-        
-        stage('Verify the Deployment') {
-            steps {
-               withKubeConfig(caCertificate: '', clusterName: 'kubernetes', contextName: '', credentialsId: 'k8-cred', namespace: 'webapps', restrictKubeConfigAccess: false, serverUrl: 'https://172.31.21.79:6443') {
-                        sh "kubectl get pods -n webapps"
-                        sh "kubectl get svc -n webapps"
-                }
-            }
-        }
-        
-        
+      }
     }
     post {
     always {
